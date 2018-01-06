@@ -2,8 +2,7 @@ package engineer.echo.oneactivity.core;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.support.v4.view.ViewPagerCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
@@ -22,9 +21,9 @@ class FragmentMasterImpl extends FragmentMaster {
 
     private boolean mScrolling = false;
 
-    private int mState = ViewPager.SCROLL_STATE_IDLE;
+    private int mState = ViewPagerCompat.SCROLL_STATE_IDLE;
 
-    private OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener() {
+    private ViewPagerCompat.OnPageChangeListener mOnPageChangeListener = new ViewPagerCompat.OnPageChangeListener() {
 
         @Override
         public void onPageSelected(int position) {
@@ -33,7 +32,7 @@ class FragmentMasterImpl extends FragmentMaster {
         @Override
         public void onPageScrolled(int position, float positionOffset,
                                    int positionOffsetPixels) {
-            if (mState == ViewPager.SCROLL_STATE_IDLE) {
+            if (mState == ViewPagerCompat.SCROLL_STATE_IDLE) {
                 setUpAnimator(getPrimaryFragment());
             }
         }
@@ -41,7 +40,7 @@ class FragmentMasterImpl extends FragmentMaster {
         @Override
         public void onPageScrollStateChanged(int state) {
             mState = state;
-            if (state == ViewPager.SCROLL_STATE_IDLE) {
+            if (state == ViewPagerCompat.SCROLL_STATE_IDLE) {
                 mViewPager.post(new Runnable() {
                     @Override
                     public void run() {

@@ -2,8 +2,6 @@ package engineer.echo.oneactivity.core;
 
 import android.annotation.SuppressLint;
 import android.os.Parcelable;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.view.ViewPagerCompat;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,7 +33,7 @@ class FragmentMasterPager extends ViewPagerCompat {
         }
     };
 
-    private ViewPager.PageTransformer mPageTransformer = new ViewPager.PageTransformer() {
+    private PageTransformer mPageTransformer = new PageTransformer() {
         @Override
         public void transformPage(View page, float position) {
             resetPage(page, position);
@@ -75,7 +73,7 @@ class FragmentMasterPager extends ViewPagerCompat {
                 mWrappedOnPageChangeListener.onPageScrollStateChanged(state);
             }
 
-            if (state == ViewPager.SCROLL_STATE_IDLE) {
+            if (state == ViewPagerCompat.SCROLL_STATE_IDLE) {
                 post(mIdleRunnable);
             }
         }
