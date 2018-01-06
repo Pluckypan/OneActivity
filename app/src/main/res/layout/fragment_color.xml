@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/app_color_selected_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#6633CC"
+        android:gravity="center"
+        android:padding="14dp"
+        android:text="当前选中颜色"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/app_color_selected_tv">
+
+        <View
+            android:id="@+id/app_color_1_tv"
+            style="@style/ColorCardStyle"
+            android:background="#0099FF" />
+
+        <View
+            android:id="@+id/app_color_2_tv"
+            style="@style/ColorCardStyle"
+            android:background="#00CCFF" />
+
+        <View
+            android:id="@+id/app_color_3_tv"
+            style="@style/ColorCardStyle"
+            android:background="#00FFFF" />
+
+        <View
+            android:id="@+id/app_color_4_tv"
+            style="@style/ColorCardStyle"
+            android:background="#00FFCC" />
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
