@@ -15,10 +15,6 @@ import android.os.Parcelable;
 import android.os.SystemClock;
 import android.support.v4.os.ParcelableCompat;
 import android.support.v4.os.ParcelableCompatCreatorCallbacks;
-import android.support.v4.view.ViewPager.Decor;
-import android.support.v4.view.ViewPager.OnAdapterChangeListener;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v4.view.ViewPager.PageTransformer;
 import android.support.v4.view.accessibility.AccessibilityEventCompat;
 import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.support.v4.view.accessibility.AccessibilityRecordCompat;
@@ -38,6 +34,7 @@ import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -148,8 +145,6 @@ public class ViewPagerCompat extends ViewGroup {
 
     private boolean mIsUnableToDrag;
 
-    private boolean mIgnoreGutter;
-
     private int mDefaultGutterSize;
 
     private int mGutterSize;
@@ -237,7 +232,7 @@ public class ViewPagerCompat extends ViewGroup {
 
     /**
      * Indicates that the pager is in an idle, settled state. The current page
-     * is fully in android.support.v4.view and no animation is in progress.
+     * is fully in view and no animation is in progress.
      */
     public static final int SCROLL_STATE_IDLE = 0;
 
@@ -272,13 +267,13 @@ public class ViewPagerCompat extends ViewGroup {
     }
 
     /**
-     * Simple implementation of the {@link OnPageChangeListener} interface with
+     * Simple implementation of the {@link ViewPagerCompat.OnPageChangeListener} interface with
      * stub implementations of each method. Extend this if you do not intend to
-     * override every method of {@link OnPageChangeListener}.
+     * override every method of {@link ViewPagerCompat.OnPageChangeListener}.
      */
     public static class SimpleOnPageChangeListener
             implements
-            OnPageChangeListener {
+            ViewPagerCompat.OnPageChangeListener {
 
         @Override
         public void onPageScrolled(int position, float positionOffset,
@@ -491,7 +486,7 @@ public class ViewPagerCompat extends ViewGroup {
         final int pageLimit = mOffscreenPageLimit;
         if (item > (mCurItem + pageLimit) || item < (mCurItem - pageLimit)) {
             // We are doing a jump by more than one page. To avoid
-            // glitches, we want to keep all current pages in the android.support.v4.view
+            // glitches, we want to keep all current pages in the view
             // until the scroll ends.
             for (int i = 0; i < mItems.size(); i++) {
                 mItems.get(i).scrolling = true;
@@ -549,7 +544,7 @@ public class ViewPagerCompat extends ViewGroup {
 
     /**
      * Set a listener that will be invoked whenever the page changes or is
-     * incrementally scrolled. See {@link OnPageChangeListener}.
+     * incrementally scrolled. See {@link ViewPagerCompat.OnPageChangeListener}.
      *
      * @param listener Listener to set
      */
@@ -558,7 +553,7 @@ public class ViewPagerCompat extends ViewGroup {
     }
 
     /**
-     * Set a {@link PageTransformer} that will be called for each attached page
+     * Set a {@link ViewPagerCompat.PageTransformer} that will be called for each attached page
      * whenever the scroll position is changed. This allows the application to
      * apply custom property transformations to each page, overriding the
      * default sliding look and feel.
@@ -631,7 +626,7 @@ public class ViewPagerCompat extends ViewGroup {
 
     /**
      * Returns the number of pages that will be retained to either side of the
-     * current page in the android.support.v4.view hierarchy in an idle state. Defaults to 1.
+     * current page in the view hierarchy in an idle state. Defaults to 1.
      *
      * @return How many pages will be kept offscreen on either side
      * @see #setOffscreenPageLimit(int)
@@ -642,7 +637,7 @@ public class ViewPagerCompat extends ViewGroup {
 
     /**
      * Set the number of pages that should be retained to either side of the
-     * current page in the android.support.v4.view hierarchy in an idle state. Pages beyond this
+     * current page in the view hierarchy in an idle state. Pages beyond this
      * limit will be recreated from the adapter when needed.
      * <p>
      * <p>
@@ -651,7 +646,7 @@ public class ViewPagerCompat extends ViewGroup {
      * on your pages, tweaking this setting can have benefits in perceived
      * smoothness of paging animations and interaction. If you have a small
      * number of pages (3-4) that you can keep active all at once, less time
-     * will be spent in layout for newly created android.support.v4.view subtrees as the user pages
+     * will be spent in layout for newly created view subtrees as the user pages
      * back and forth.
      * </p>
      * <p>
@@ -934,7 +929,7 @@ public class ViewPagerCompat extends ViewGroup {
         }
 
         // Also, don't populate until we are attached to a window. This is to
-        // avoid trying to populate before we have restored our android.support.v4.view hierarchy
+        // avoid trying to populate before we have restored our view hierarchy
         // state and conflicting with what is restored.
         if (getWindowToken() == null) {
             return;
@@ -1002,7 +997,7 @@ public class ViewPagerCompat extends ViewGroup {
                         mAdapter.destroyItem(this, pos, ii.object);
                         if (DEBUG) {
                             Log.i(TAG, "populate() - destroyItem() with pos: "
-                                    + pos + " android.support.v4.view: " + ii.object);
+                                    + pos + " view: " + ii.object);
                         }
                         itemIndex--;
                         curIndex--;
@@ -1038,7 +1033,7 @@ public class ViewPagerCompat extends ViewGroup {
                             if (DEBUG) {
                                 Log.i(TAG,
                                         "populate() - destroyItem() with pos: "
-                                                + pos + " android.support.v4.view: "
+                                                + pos + " view: "
                                                 + ii.object);
                             }
                             ii = itemIndex < mItems.size() ? mItems
@@ -1222,7 +1217,7 @@ public class ViewPagerCompat extends ViewGroup {
     }
 
     /**
-     * This is the persistent state that is saved by ViewPager. Only needed if
+     * This is the persistent state that is saved by ViewPagerCompat. Only needed if
      * you are creating a sublass of ViewPager that must save its own state, in
      * which case it should implement a subclass of this which contains that
      * state.
@@ -1253,7 +1248,7 @@ public class ViewPagerCompat extends ViewGroup {
                     + " position=" + position + "}";
         }
 
-        public static final Creator<SavedState> CREATOR = ParcelableCompat
+        public static final Parcelable.Creator<SavedState> CREATOR = ParcelableCompat
                 .newCreator(new ParcelableCompatCreatorCallbacks<SavedState>() {
                     @Override
                     public SavedState createFromParcel(Parcel in,
@@ -1319,7 +1314,7 @@ public class ViewPagerCompat extends ViewGroup {
         if (mInLayout) {
             if (lp != null && lp.isDecor) {
                 throw new IllegalStateException(
-                        "Cannot add pager decor android.support.v4.view during layout");
+                        "Cannot add pager decor view during layout");
             }
             lp.needsMeasure = true;
             addViewInLayout(child, index, params);
@@ -1386,7 +1381,7 @@ public class ViewPagerCompat extends ViewGroup {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         // For simple implementation, our internal size is always 0.
         // We depend on the container to specify the layout size of
-        // our android.support.v4.view. We can't really know what it is since we will be
+        // our view. We can't really know what it is since we will be
         // adding and removing different arbitrary views and do not
         // want the layout to change as this happens.
         setMeasuredDimension(getDefaultSize(0, widthMeasureSpec),
@@ -1798,7 +1793,7 @@ public class ViewPagerCompat extends ViewGroup {
     private void completeScroll(boolean postEvents) {
         boolean needPopulate = mScrollState == SCROLL_STATE_SETTLING;
         if (needPopulate) {
-            // Done with scroll, no longer want to cache android.support.v4.view drawing.
+            // Done with scroll, no longer want to cache view drawing.
             setScrollingCacheEnabled(false);
             mScroller.abortAnimation();
             int oldX = getScrollX();
@@ -1918,7 +1913,7 @@ public class ViewPagerCompat extends ViewGroup {
 
                 if (dx != 0 && !isGutterDrag(mLastMotionX, dx)
                         && canScroll(this, false, (int) dx, (int) x, (int) y)) {
-                    // Nested android.support.v4.view has scrollable area under this point. Let it
+                    // Nested view has scrollable area under this point. Let it
                     // be handled there.
                     mLastMotionX = x;
                     mLastMotionY = y;
@@ -2369,7 +2364,7 @@ public class ViewPagerCompat extends ViewGroup {
      * <p>
      * <p>
      * A fake drag can be useful if you want to synchronize the motion of the
-     * ViewPager with the touch scrolling of another android.support.v4.view, while still letting
+     * ViewPager with the touch scrolling of another view, while still letting
      * the ViewPager control the snapping motion and fling behavior. (e.g.
      * parallax-scrolling tabs.) Call {@link #fakeDragBy(float)} to simulate the
      * actual drag motion. Call {@link #endFakeDrag()} to complete the fake drag
@@ -2560,7 +2555,7 @@ public class ViewPagerCompat extends ViewGroup {
      * Tests scrollability within child views of v given a delta of dx.
      *
      * @param v      View to test for horizontal scrollability
-     * @param checkV Whether the android.support.v4.view v passed should itself be checked for
+     * @param checkV Whether the view v passed should itself be checked for
      *               scrollability (true), or just its children (false).
      * @param dx     Delta scrolled in pixels
      * @param x      X coordinate of the active touch point
@@ -2596,14 +2591,14 @@ public class ViewPagerCompat extends ViewGroup {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        // Let the focused android.support.v4.view and/or our descendants get the key first
+        // Let the focused view and/or our descendants get the key first
         return super.dispatchKeyEvent(event) || executeKeyEvent(event);
     }
 
     /**
-     * You can call this function yourself to have the scroll android.support.v4.view perform
+     * You can call this function yourself to have the scroll view perform
      * scrolling from a key event, just as if the event had been dispatched to
-     * it by the android.support.v4.view hierarchy.
+     * it by the view hierarchy.
      *
      * @param event The key event to execute.
      * @return Return true if the event was handled, else false.
@@ -2663,7 +2658,7 @@ public class ViewPagerCompat extends ViewGroup {
                 }
                 Log.e(TAG,
                         "arrowScroll tried to find focus based on non-child "
-                                + "current focused android.support.v4.view " + sb.toString());
+                                + "current focused view " + sb.toString());
                 currentFocused = null;
             }
         }
@@ -2855,7 +2850,7 @@ public class ViewPagerCompat extends ViewGroup {
 
     @Override
     public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-        // Dispatch scroll events from this ViewPager.
+        // Dispatch scroll events from this ViewPagerCompat.
         if (event.getEventType() == AccessibilityEventCompat.TYPE_VIEW_SCROLLED) {
             return super.dispatchPopulateAccessibilityEvent(event);
         }
@@ -2904,7 +2899,7 @@ public class ViewPagerCompat extends ViewGroup {
         public void onInitializeAccessibilityEvent(View host,
                                                    AccessibilityEvent event) {
             super.onInitializeAccessibilityEvent(host, event);
-            event.setClassName(ViewPager.class.getName());
+            event.setClassName(ViewPagerCompat.class.getName());
             final AccessibilityRecordCompat recordCompat = AccessibilityRecordCompat
                     .obtain();
             recordCompat.setScrollable(canScroll());
@@ -2920,7 +2915,7 @@ public class ViewPagerCompat extends ViewGroup {
         public void onInitializeAccessibilityNodeInfo(View host,
                                                       AccessibilityNodeInfoCompat info) {
             super.onInitializeAccessibilityNodeInfo(host, info);
-            info.setClassName(ViewPager.class.getName());
+            info.setClassName(ViewPagerCompat.class.getName());
             info.setScrollable(canScroll());
             if (canScrollHorizontally(1)) {
                 info.addAction(AccessibilityNodeInfoCompat.ACTION_SCROLL_FORWARD);
@@ -2974,20 +2969,20 @@ public class ViewPagerCompat extends ViewGroup {
     }
 
     /**
-     * Layout parameters that should be supplied for views added to a ViewPager.
+     * Layout parameters that should be supplied for views added to a ViewPagerCompat.
      */
     public static class LayoutParams extends ViewGroup.LayoutParams {
 
         /**
-         * true if this android.support.v4.view is a decoration on the pager itself and not a android.support.v4.view
+         * true if this view is a decoration on the pager itself and not a view
          * supplied by the adapter.
          */
         public boolean isDecor;
 
         /**
          * Gravity setting for use on decor views only: Where to position the
-         * android.support.v4.view page within the overall ViewPager container; constants are
-         * defined in {@link Gravity}.
+         * view page within the overall ViewPager container; constants are
+         * defined in {@link android.view.Gravity}.
          */
         public int gravity;
 
@@ -2997,18 +2992,18 @@ public class ViewPagerCompat extends ViewGroup {
         float widthFactor = 0.f;
 
         /**
-         * true if this android.support.v4.view was added during layout and needs to be measured
+         * true if this view was added during layout and needs to be measured
          * before being positioned.
          */
         boolean needsMeasure;
 
         /**
-         * Adapter position this android.support.v4.view is for if !isDecor
+         * Adapter position this view is for if !isDecor
          */
         int position;
 
         /**
-         * Current child index within the ViewPager that this android.support.v4.view occupies
+         * Current child index within the ViewPager that this view occupies
          */
         int childIndex;
 
@@ -3039,4 +3034,55 @@ public class ViewPagerCompat extends ViewGroup {
         }
     }
 
+    interface OnAdapterChangeListener {
+        public void onAdapterChanged(PagerAdapter oldAdapter, PagerAdapter newAdapter);
+    }
+    interface Decor {}
+
+    public interface OnPageChangeListener {
+
+        /**
+         * This method will be invoked when the current page is scrolled, either as part
+         * of a programmatically initiated smooth scroll or a user initiated touch scroll.
+         *
+         * @param position Position index of the first page currently being displayed.
+         *                 Page position+1 will be visible if positionOffset is nonzero.
+         * @param positionOffset Value from [0, 1) indicating the offset from the page at position.
+         * @param positionOffsetPixels Value in pixels indicating the offset from position.
+         */
+        void onPageScrolled(int position, float positionOffset, int positionOffsetPixels);
+
+        /**
+         * This method will be invoked when a new page becomes selected. Animation is not
+         * necessarily complete.
+         *
+         * @param position Position index of the new selected page.
+         */
+        void onPageSelected(int position);
+
+        /**
+         * Called when the scroll state changes. Useful for discovering when the user
+         * begins dragging, when the pager is automatically settling to the current page,
+         * or when it is fully stopped/idle.
+         *
+         * @param state The new scroll state.
+         * @see ViewPager#SCROLL_STATE_IDLE
+         * @see ViewPager#SCROLL_STATE_DRAGGING
+         * @see ViewPager#SCROLL_STATE_SETTLING
+         */
+        void onPageScrollStateChanged(int state);
+    }
+
+    public interface PageTransformer {
+        /**
+         * Apply a property transformation to the given page.
+         *
+         * @param page Apply the transformation to this page
+         * @param position Position of page relative to the current front-and-center
+         *                 position of the pager. 0 is front and center. 1 is one full
+         *                 page position to the right, and -1 is one page position to the left.
+         */
+        void transformPage(View page, float position);
+    }
 }
+
