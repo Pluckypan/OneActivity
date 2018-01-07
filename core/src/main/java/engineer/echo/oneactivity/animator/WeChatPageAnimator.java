@@ -11,8 +11,6 @@ public class WeChatPageAnimator extends PageAnimator {
      */
     private static final String TAG = "WeChatPageAnimator";
 
-    public static final WeChatPageAnimator INSTANCE = new WeChatPageAnimator();
-
     private static final float SPEED = 0.8f;
 
     @Override

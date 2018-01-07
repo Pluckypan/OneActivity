@@ -38,13 +38,10 @@ class FragmentMasterPager extends ViewPagerCompat {
         public void transformPage(View page, float position) {
             resetPage(page, position);
             if (mFragmentMasterImpl.hasPageAnimator()) {
-                if (position < -1 || position > 1) {
-                    page.setVisibility(INVISIBLE);
-                } else {
-                    page.setVisibility(VISIBLE);
-                    mFragmentMasterImpl.getPageAnimator().transformPage(page,
-                            position, mAnimationState == ANIMATION_ENTER);
-                }
+                float pos = position < -1 ? -1 : (position > 1 ? 1 : position);
+                page.setVisibility(VISIBLE);
+                mFragmentMasterImpl.getPageAnimator().transformPage(page,
+                        pos, mAnimationState == ANIMATION_ENTER);
             } else {
                 page.setVisibility(VISIBLE);
             }

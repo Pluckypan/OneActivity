@@ -10,4 +10,9 @@ import engineer.echo.oneactivity.core.MasterFragment;
 
 public class BaseFragment extends MasterFragment {
     public final String TAG = getClass().getSimpleName();
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 }
