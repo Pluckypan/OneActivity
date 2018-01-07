@@ -4,6 +4,13 @@ import android.view.View;
 
 public class WeChatPageAnimator extends PageAnimator {
 
+    public WeChatPageAnimator() {
+    }
+
+    public WeChatPageAnimator(int mDuraiton) {
+        super(mDuraiton);
+    }
+
     /**
      * 添加WeChat侧滑效果
      * WeChat在侧滑时,背景的滑动幅度很小，这样就存在一个视差效果
@@ -25,5 +32,4 @@ public class WeChatPageAnimator extends PageAnimator {
     protected void transformForegroundPage(View page, float position,
                                            boolean enter) {
     }
-
 }

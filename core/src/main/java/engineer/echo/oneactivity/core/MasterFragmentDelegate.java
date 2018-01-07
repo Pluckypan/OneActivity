@@ -6,15 +6,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-
 import engineer.echo.oneactivity.animator.DefaultPageAnimator;
 import engineer.echo.oneactivity.animator.PageAnimator;
 import engineer.echo.oneactivity.dispatch.FragmentEventDispatcher;
@@ -54,7 +51,6 @@ class MasterFragmentDelegate {
         }
     };
 
-    private Activity mActivity;
     private IMasterActivity mMasterActivity;
 
     private boolean mStateSaved = false;
@@ -80,7 +76,6 @@ class MasterFragmentDelegate {
         if (activity instanceof IMasterActivity) {
             mMasterActivity = (IMasterActivity) activity;
         }
-        mActivity = activity;
         mFragmentContext = new FragmentContext(mMasterFragment);
         if (getFragmentMaster() != null) {
             getFragmentMaster().dispatchFragmentAttached(mMasterFragment);
@@ -179,7 +174,6 @@ class MasterFragmentDelegate {
 
     public void onDetach() {
         mMasterActivity = null;
-        mActivity = null;
         if (getFragmentMaster() != null) {
             getFragmentMaster().dispatchFragmentDetached(mMasterFragment);
         }

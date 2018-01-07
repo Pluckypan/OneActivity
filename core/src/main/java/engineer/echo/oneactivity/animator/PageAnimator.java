@@ -10,6 +10,14 @@ import android.view.View;
  */
 public abstract class PageAnimator {
 
+    public PageAnimator() {
+
+    }
+
+    public PageAnimator(int mDuraiton) {
+        this.mDuraiton = mDuraiton;
+    }
+
     /**
      * Apply a transformation to the given page.
      *
@@ -47,6 +55,19 @@ public abstract class PageAnimator {
      */
     protected abstract void transformForegroundPage(View page, float position,
                                                     boolean enter);
+
+    /**
+     * 设置页面动画执行时间 如 mDuraiton>0 则生效
+     */
+    private int mDuraiton;
+
+    public int getDuraiton() {
+        return mDuraiton;
+    }
+
+    public void setDuraiton(int duraiton) {
+        this.mDuraiton = duraiton;
+    }
 
     protected void transformUnderlyingPage(View page, float position, boolean enter) {
         page.setAlpha(1);
@@ -105,18 +126,22 @@ public abstract class PageAnimator {
     }
 
     public static PageAnimator getAnimatorByClass(Class cls) {
+        return getAnimatorByClass(cls, 0);
+    }
+
+    public static PageAnimator getAnimatorByClass(Class cls, int duration) {
         if (cls != null) {
             if (cls == EnterOvershootAnimator.class) {
-                return new EnterOvershootAnimator();
+                return new EnterOvershootAnimator(duration);
             } else if (cls == VerticalSlideAnimator.class) {
-                return new VerticalSlideAnimator();
+                return new VerticalSlideAnimator(duration);
             } else if (cls == WeChatPageAnimator.class) {
-                return new WeChatPageAnimator();
+                return new WeChatPageAnimator(duration);
             } else {
-                return DefaultPageAnimator.INSTANCE;
+                return new DefaultPageAnimator(duration);
             }
         } else {
-            return DefaultPageAnimator.INSTANCE;
+            return new DefaultPageAnimator(duration);
         }
     }
 

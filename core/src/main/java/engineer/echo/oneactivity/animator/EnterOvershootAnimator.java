@@ -7,6 +7,13 @@ import android.view.animation.OvershootInterpolator;
 public class EnterOvershootAnimator extends PageAnimator {
     private static final float MIN_SCALE = 0.85f;
 
+    public EnterOvershootAnimator() {
+    }
+
+    public EnterOvershootAnimator(int mDuraiton) {
+        super(mDuraiton);
+    }
+
     private static final Interpolator sInterpolator = new OvershootInterpolator(
             1.0f);
 

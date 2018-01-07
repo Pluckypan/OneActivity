@@ -4,6 +4,13 @@ import android.view.View;
 
 public class DefaultPageAnimator extends PageAnimator {
 
+    public DefaultPageAnimator() {
+    }
+
+    public DefaultPageAnimator(int mDuraiton) {
+        super(mDuraiton);
+    }
+
     /**
      * 默认页面切换动画 不添加任何效果 即ViewPagerCompat默认效果
      */
@@ -20,5 +27,4 @@ public class DefaultPageAnimator extends PageAnimator {
     protected void transformForegroundPage(View page, float position,
                                            boolean enter) {
     }
-
 }

@@ -3,15 +3,22 @@ package engineer.echo.oneactivity.core;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Scroller;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import engineer.echo.oneactivity.R;
+import engineer.echo.oneactivity.animator.FixedSpeedScroller;
+import engineer.echo.oneactivity.animator.PageAnimator;
 
 class FragmentMasterImpl extends FragmentMaster implements PagerController {
+    private static final String TAG = "FragmentMasterImpl";
 
     // The id of fragments' real container.
     public final static int FRAGMENT_CONTAINER_ID = R.id.master_fragment_container;
@@ -19,6 +26,7 @@ class FragmentMasterImpl extends FragmentMaster implements PagerController {
     private FragmentsAdapter mAdapter;
 
     private FragmentMasterPager mViewPager;
+    private FixedSpeedScroller mScroller;
 
     private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
@@ -48,7 +56,8 @@ class FragmentMasterImpl extends FragmentMaster implements PagerController {
         mViewPager.setOffscreenPageLimit(Integer.MAX_VALUE);
         mViewPager.setAdapter(mAdapter);
         mViewPager.addOnPageChangeListener(mOnPageChangeListener);
-        // TODO: Plucky 2018/1/7 下午6:18  需要控制滚动时间
+        mScroller = new FixedSpeedScroller(getActivity(), new LinearOutSlowInInterpolator());
+        reflectScroller(mViewPager, mScroller);
         container.addView(mViewPager);
     }
 
@@ -64,7 +73,7 @@ class FragmentMasterImpl extends FragmentMaster implements PagerController {
         // Perform "smooth scroll" if the page has a PageAnimator and more than
         // one item.
         boolean smoothScroll = hasPageAnimator() && nextItem > 0;
-        mViewPager.setCurrentItem(nextItem, smoothScroll);
+        setCurrentPageInner(nextItem, smoothScroll);
     }
 
     @Override
@@ -77,7 +86,7 @@ class FragmentMasterImpl extends FragmentMaster implements PagerController {
             // When scrolling is stopped, real finish will be done by
             // cleanUp method.
             if (hasPageAnimator()) {
-                mViewPager.setCurrentItem(index - 1, true);
+                setCurrentPageInner(index - 1, true);
                 // If pager is scrolling, do real finish when cleanUp.
                 deliverFragmentResult(fragment, resultCode, data);
                 return;
@@ -95,7 +104,7 @@ class FragmentMasterImpl extends FragmentMaster implements PagerController {
                     }
                 }
             }
-            mViewPager.setCurrentItem(index - 1, false);
+            setCurrentPageInner(index - 1, false);
         }
         super.onFinishFragment(fragment, resultCode, data);
     }
@@ -109,6 +118,20 @@ class FragmentMasterImpl extends FragmentMaster implements PagerController {
         // When scrolling stopped, do cleanup.
         mViewPager.removeCallbacks(mCleanUpRunnable);
         mViewPager.post(mCleanUpRunnable);
+    }
+
+    /**
+     * 当页面切换之前 设置页面切换时间
+     *
+     * @param index  int
+     * @param smooth boolean
+     */
+    private void setCurrentPageInner(int index, boolean smooth) {
+        PageAnimator animator = getPageAnimator();
+        if (mScroller != null && animator != null) {
+            mScroller.setPageDuration(animator.getDuraiton());
+        }
+        mViewPager.setCurrentItem(index, smooth);
     }
 
     /**
@@ -175,6 +198,22 @@ class FragmentMasterImpl extends FragmentMaster implements PagerController {
         @Override
         public boolean isViewFromObject(View view, Object object) {
             return ((IMasterFragment) object).getView() == view;
+        }
+    }
+
+    /**
+     * 通过反射更改ViewPager滑动速度
+     *
+     * @param scroller Scroller
+     */
+    private void reflectScroller(ViewPager pager, Scroller scroller) {
+        try {
+            Field field = ViewPager.class.getDeclaredField("mScroller");
+            field.setAccessible(true);
+            field.set(pager, scroller);
+            Log.d(TAG, "reflectScroller: ");
+        } catch (Exception e) {
+            Log.e(TAG, "reflectScroller: ", e);
         }
     }
 }

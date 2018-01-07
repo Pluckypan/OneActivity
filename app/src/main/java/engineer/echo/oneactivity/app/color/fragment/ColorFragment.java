@@ -6,7 +6,6 @@ import engineer.echo.oneactivity.cmpts.context.BaseFragment;
 import engineer.echo.oneactivity.cmpts.mvp.AbstractMvpFragment;
 import engineer.echo.oneactivity.app.color.mvp.ColorContract;
 import engineer.echo.oneactivity.core.Request;
-
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;

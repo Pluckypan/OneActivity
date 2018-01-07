@@ -14,8 +14,8 @@ import engineer.echo.oneactivity.cmpts.beans.AnimatorBean;
 
 public class Constants {
     public static AnimatorBean[] ANIMATORS = {
-            new AnimatorBean("动画·一式", R.color.color_0099FF, EnterOvershootAnimator.class),
-            new AnimatorBean("动画·二式", R.color.color_00CCFF, WeChatPageAnimator.class),
-            new AnimatorBean("动画·三式", R.color.color_00FFFF, VerticalSlideAnimator.class),
+            new AnimatorBean("动画·一式", R.color.color_00CCFF, WeChatPageAnimator.class, 500),
+            new AnimatorBean("动画·二式", R.color.color_0099FF, EnterOvershootAnimator.class, 1000),
+            new AnimatorBean("动画·三式", R.color.color_00FFFF, VerticalSlideAnimator.class, 2000),
     };
 }

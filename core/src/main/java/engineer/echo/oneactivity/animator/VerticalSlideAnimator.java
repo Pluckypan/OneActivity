@@ -5,6 +5,13 @@ import android.view.View;
 public class VerticalSlideAnimator extends PageAnimator {
     private static final float MIN_SCALE = 0.85f;
 
+    public VerticalSlideAnimator() {
+    }
+
+    public VerticalSlideAnimator(int mDuraiton) {
+        super(mDuraiton);
+    }
+
     @Override
     protected void transformBackgroundPage(View page, float position,
                                            boolean enter) {

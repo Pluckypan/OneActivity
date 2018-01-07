@@ -66,7 +66,7 @@ public class AnimatorFragment extends AbstractMvpFragment<AnimatorContract.Prese
 
     @Override
     public PageAnimator onCreatePageAnimator() {
-        return PageAnimator.getAnimatorByClass(mAnimatorBean.getType());
+        return PageAnimator.getAnimatorByClass(mAnimatorBean.getType(), mAnimatorBean.getDuration());
     }
 
     // ===========================================================

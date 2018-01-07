@@ -10,9 +10,11 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
 import engineer.echo.oneactivity.BuildConfig;
 import engineer.echo.oneactivity.animator.PageAnimator;
 import engineer.echo.oneactivity.dispatch.MasterEventDispatcher;
@@ -93,16 +95,6 @@ public abstract class FragmentMaster {
         fragment.setPrimary(false);
         setUpAnimator(fragment);
         onFragmentStarted(fragment);
-    }
-
-    private int mScrollDuration;
-
-    public int getScrollDuration() {
-        return mScrollDuration;
-    }
-
-    public void setScrollDuration(int scrollDuration) {
-        this.mScrollDuration = scrollDuration;
     }
 
     protected void setUpAnimator(IMasterFragment fragment) {

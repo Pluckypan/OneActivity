@@ -11,7 +11,6 @@ import engineer.echo.oneactivity.core.Request;
 public class MainActivity extends MasterCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static final int DURATION = 600;
 
     private FragmentMaster mMaster;
     private FragmentMaster.FragmentLifecycleCallbacks mCallBacks = new FragmentMaster.SimpleFragmentLifecycleCallbacks() {
@@ -33,7 +32,6 @@ public class MainActivity extends MasterCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mMaster = getFragmentMaster();
-        mMaster.setScrollDuration(DURATION);
         mMaster.registerFragmentLifecycleCallbacks(mCallBacks);
         mMaster.install(R.id.app_main_container, new Request(MainFragment.class), true);
 
