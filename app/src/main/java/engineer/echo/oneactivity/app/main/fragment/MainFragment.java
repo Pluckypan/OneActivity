@@ -5,6 +5,7 @@ import engineer.echo.oneactivity.R;
 import engineer.echo.oneactivity.app.animator.fragment.AnimatorFragment;
 import engineer.echo.oneactivity.app.color.fragment.ColorFragment;
 import engineer.echo.oneactivity.app.main.mvp.MainPresenter;
+import engineer.echo.oneactivity.app.softinput.fragment.SoftInputFragment;
 import engineer.echo.oneactivity.cmpts.Constants;
 import engineer.echo.oneactivity.cmpts.beans.AnimatorBean;
 import engineer.echo.oneactivity.cmpts.mvp.AbstractMvpFragment;
@@ -83,6 +84,7 @@ public class MainFragment extends AbstractMvpFragment<MainContract.Presenter> im
                 return layout;
             }
         });
+        view.findViewById(R.id.app_main_softinput_tv).setOnClickListener(this);
     }
 
     @Override
@@ -90,6 +92,9 @@ public class MainFragment extends AbstractMvpFragment<MainContract.Presenter> im
         switch (v.getId()) {
             case R.id.app_main_color_tv:
                 ColorFragment.openPage(this, mColor, COLOR_CODE);
+                break;
+            case R.id.app_main_softinput_tv:
+                SoftInputFragment.openPage(this);
                 break;
         }
     }
