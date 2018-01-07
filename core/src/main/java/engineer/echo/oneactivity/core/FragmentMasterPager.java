@@ -6,7 +6,7 @@ import android.support.v4.view.ViewPagerCompat;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.nineoldandroids.view.ViewHelper;
+import engineer.echo.oneactivity.animator.PageAnimator;
 
 /**
  * Real container of fragments.
@@ -51,16 +51,16 @@ class FragmentMasterPager extends ViewPagerCompat {
         }
 
         private void resetPage(View page, float position) {
-            ViewHelper.setAlpha(page, 1);
-            ViewHelper.setTranslationX(page, 0);
-            ViewHelper.setTranslationY(page, 0);
-            ViewHelper.setScaleX(page, 1);
-            ViewHelper.setScaleY(page, 1);
-            ViewHelper.setRotation(page, 0);
-            ViewHelper.setRotationX(page, 0);
-            ViewHelper.setRotationY(page, 0);
-            ViewHelper.setPivotX(page, page.getWidth() / 2f);
-            ViewHelper.setPivotY(page, page.getHeight() / 2f);
+            PageAnimator.setAlpha(page, 1);
+            PageAnimator.setTranslationX(page, 0);
+            PageAnimator.setTranslationY(page, 0);
+            PageAnimator.setScaleX(page, 1);
+            PageAnimator.setScaleY(page, 1);
+            PageAnimator.setRotation(page, 0);
+            PageAnimator.setRotationX(page, 0);
+            PageAnimator.setRotationY(page, 0);
+            PageAnimator.setPivotX(page, page.getWidth() / 2f);
+            PageAnimator.setPivotY(page, page.getHeight() / 2f);
         }
 
     };
