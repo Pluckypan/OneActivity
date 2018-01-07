@@ -1,5 +1,6 @@
 package engineer.echo.oneactivity.animator;
 
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 /**
@@ -33,7 +34,7 @@ public abstract class PageAnimator {
      * @param position [-1,0]
      */
     protected abstract void transformBackgroundPage(View page, float position,
-            boolean enter);
+                                                    boolean enter);
 
     /**
      * In this stage, transform the foreground page.
@@ -41,6 +42,51 @@ public abstract class PageAnimator {
      * @param position (0,1]
      */
     protected abstract void transformForegroundPage(View page, float position,
-            boolean enter);
+                                                    boolean enter);
+
+    public static void setScaleX(View view, float scale) {
+        ViewCompat.setScaleX(view, scale);
+    }
+
+    public static void setScaleY(View view, float scale) {
+        ViewCompat.setScaleY(view, scale);
+    }
+
+    public static void setScale(View view, float scale) {
+        setScaleX(view, scale);
+        setScaleY(view, scale);
+    }
+
+    public static void setTranslationX(View view, float x) {
+        ViewCompat.setTranslationX(view, x);
+    }
+
+    public static void setTranslationY(View view, float y) {
+        ViewCompat.setTranslationY(view, y);
+    }
+
+    public static void setAlpha(View view, float alpha) {
+        ViewCompat.setAlpha(view, alpha);
+    }
+
+    public static void setRotation(View view, float rotation) {
+        ViewCompat.setRotation(view, rotation);
+    }
+
+    public static void setRotationX(View view, float x) {
+        ViewCompat.setRotationX(view, x);
+    }
+
+    public static void setRotationY(View view, float y) {
+        ViewCompat.setRotationY(view, y);
+    }
+
+    public static void setPivotX(View view, float x) {
+        ViewCompat.setPivotX(view, x);
+    }
+
+    public static void setPivotY(View view, float y) {
+        ViewCompat.setPivotY(view, y);
+    }
 
 }
