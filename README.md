@@ -122,8 +122,8 @@ public class LightThemeFragment extends MasterFragment {
 
 ### TODO
 - [ ] 实现可以设置 滑动边缘:比如从上往下滑动
-- [ ] xxx
-- [ ] xxx
+- [ ] 监听嵌套Fragment的返回键监听
+- [ ] 实现OneActivity MVP 自动生成插件(有点特殊)
 
 ### 写在结尾
 > 碧玉妆成一树高，万条垂下绿丝绦。不知细叶谁裁出，二月春风似剪刀。
