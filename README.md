@@ -13,7 +13,7 @@
 在 **FragmentMaster** 的基础上
 1. 修复了一些BUG
 2. 重新调整了项目的结构
-3. 优化Fragment页面间切换动画
+3. 优化Fragment页面间切换动画,支持设定动画执行时间
 4. 踩平Fragment一些坑并优化Fragment性能
 5. 支持gradle引用
 
@@ -28,12 +28,21 @@
 
 #### 打开一个页面
 ``` java
-
+// 打开界面是通过request来实现的
+Request request = new Request(ColorFragment.class);
+fragment.startFragment(request);
 ```
 
 #### 页面A给页面B传值
 ``` java
 
+//传值
+Request request = new Request(ColorFragment.class);
+request.putExtra(KEY_COLOR, color);
+fragment.startFragment(request);
+
+//接收值
+mColor = getRequest().getIntExtra(KEY_COLOR, -1);
 ```
 
 #### 页面回调传值
@@ -41,16 +50,74 @@
 /**
  * 类似于Activity的StartActivityForResult
  */
+
+//请求
+public static void openPage(BaseFragment fragment, int color, int code) {
+    Request request = new Request(ColorFragment.class);
+    request.putExtra(KEY_COLOR, color);
+    fragment.startFragmentForResult(request, code);
+}
+
+//请求回调
+@Override
+public void onFragmentResult(int requestCode, int resultCode, Request data) {
+    super.onFragmentResult(requestCode, resultCode, data);
+    if (resultCode == RESULT_OK && data != null) {
+        switch (requestCode) {
+            case COLOR_CODE:
+                onColorSelected(data.getIntExtra(ColorFragment.KEY_COLOR, mColor));
+                break;
+        }
+    }
+}
 ```
 
 #### 定义页面切换动画
 ``` java
+@Override
+public PageAnimator onCreatePageAnimator() {
+    return new WeChatPageAnimator();
+}
+
+// 如果要指定动画执行时间
+@Override
+public PageAnimator onCreatePageAnimator() {
+    return new WeChatPageAnimator(600);
+}
 
 ```
 
-#### 定义页面样式
+#### 禁止侧滑功能
 ``` xml
+// 目前仅支持LEFT侧滑控制
+// TODO: Plucky 2018/1/7 下午1:08  实现滑动的位置Edge:LEFT、RIGHT、TOP、BOTTOM
+boolean allow=mAnimatorBean.getType() != VerticalSlideAnimator.class;
+allowSwipeBack(allow);
+```
 
+#### 页面返回键监听
+``` java
+@Override
+public void onBackPressed() {
+    super.onBackPressed();
+    mColorTV.setText("Finish");
+}
+```
+
+#### 控制软键盘弹出
+``` java
+setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+//其他 比如
+setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
+```
+
+#### 设置主题
+``` java
+//在定义Fragment类的地方使用注解如下
+@Configuration(theme = R.style.Theme_AppCompat_Light)
+public class LightThemeFragment extends MasterFragment {
+
+}
 ```
 
 ### TODO
