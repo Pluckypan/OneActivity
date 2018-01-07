@@ -89,4 +89,20 @@ public abstract class PageAnimator {
         ViewCompat.setPivotY(view, y);
     }
 
+    public static PageAnimator getAnimatorByClass(Class cls) {
+        if (cls != null) {
+            if (cls == EnterOvershootAnimator.class) {
+                return new EnterOvershootAnimator();
+            } else if (cls == VerticalSlideAnimator.class) {
+                return new VerticalSlideAnimator();
+            } else if (cls == WeChatPageAnimator.class) {
+                return new WeChatPageAnimator();
+            } else {
+                return DefaultPageAnimator.INSTANCE;
+            }
+        } else {
+            return DefaultPageAnimator.INSTANCE;
+        }
+    }
+
 }
