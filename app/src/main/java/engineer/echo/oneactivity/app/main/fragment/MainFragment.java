@@ -23,7 +23,6 @@ public class MainFragment extends AbstractMvpFragment<MainContract.Presenter> im
     // Constants
     // ===========================================================
     private static final int COLOR_CODE = 0x001;
-    private static final int DEFAULT_COLOR = Color.parseColor("#666699");
 
     // ===========================================================
     // Fields
@@ -47,7 +46,7 @@ public class MainFragment extends AbstractMvpFragment<MainContract.Presenter> im
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        mColor = DEFAULT_COLOR;
+        mColor = getResources().getColor(R.color.color_666699);
     }
 
     @Override
@@ -72,7 +71,7 @@ public class MainFragment extends AbstractMvpFragment<MainContract.Presenter> im
         if (resultCode == RESULT_OK && data != null) {
             switch (requestCode) {
                 case COLOR_CODE:
-                    onColorSelected(data.getIntExtra(ColorFragment.KEY_COLOR, DEFAULT_COLOR));
+                    onColorSelected(data.getIntExtra(ColorFragment.KEY_COLOR, mColor));
                     break;
             }
         }
