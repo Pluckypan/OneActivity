@@ -1,7 +1,6 @@
 package engineer.echo.oneactivity;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import engineer.echo.oneactivity.app.main.fragment.MainFragment;
 import engineer.echo.oneactivity.core.FragmentMaster;
@@ -19,13 +18,13 @@ public class MainActivity extends MasterCompatActivity {
         @Override
         public void onFragmentResumed(IMasterFragment fragment) {
             super.onFragmentResumed(fragment);
-            Log.d(TAG, "onFragmentResumed: " + fragment);
+            App.LOG(TAG, "onFragmentResumed: " + fragment);
         }
 
         @Override
         public void onFragmentPaused(IMasterFragment fragment) {
             super.onFragmentPaused(fragment);
-            Log.d(TAG, "onFragmentPaused: " + fragment);
+            App.LOG(TAG, "onFragmentPaused: " + fragment);
         }
     };
 

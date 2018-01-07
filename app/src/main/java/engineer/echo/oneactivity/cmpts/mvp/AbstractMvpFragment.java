@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import engineer.echo.oneactivity.App;
 import engineer.echo.oneactivity.cmpts.context.BaseFragment;
 
 /**
@@ -34,16 +35,19 @@ public abstract class AbstractMvpFragment<P extends IPresenter> extends BaseFrag
         super.onCreate(savedInstanceState);
         mPresenter = providePresenter();
         mPresenter.attachView(this);
+        App.LOG(TAG, "onCreate()");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        App.LOG(TAG, "onCreateView()");
         return inflater.inflate(provideLayout(), container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        App.LOG(TAG, "onViewCreated()");
         if (mPresenter != null) {
             mPresenter.subscribe();
         }
@@ -53,10 +57,23 @@ public abstract class AbstractMvpFragment<P extends IPresenter> extends BaseFrag
 
     @Override
     public void onDestroyView() {
+        App.LOG(TAG, "onDestroyView()");
         if (mPresenter != null) {
             mPresenter.unsubscribe();
         }
         super.onDestroyView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        App.LOG(TAG, "onPause()");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        App.LOG(TAG, "onResume()");
     }
 
     // ===========================================================
