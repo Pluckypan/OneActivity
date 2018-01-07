@@ -53,7 +53,7 @@ public class AnimatorFragment extends AbstractMvpFragment<AnimatorContract.Prese
         mAnimatorBean = getRequest().getParcelableExtra(KEY_ANIMATOR);
         // 设置是否允许侧滑
         // TODO: Plucky 2018/1/7 下午1:08  实现滑动的位置Edge:LEFT、RIGHT、TOP、BOTTOM
-        setSlideable(mAnimatorBean.getType() != VerticalSlideAnimator.class);
+        allowSwipeBack(mAnimatorBean.getType() != VerticalSlideAnimator.class);
     }
 
     @Override

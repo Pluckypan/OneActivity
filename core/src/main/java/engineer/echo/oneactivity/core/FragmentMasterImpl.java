@@ -2,15 +2,16 @@ package engineer.echo.oneactivity.core;
 
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPagerCompat;
+import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import engineer.echo.oneactivity.R;
 
-class FragmentMasterImpl extends FragmentMaster {
+class FragmentMasterImpl extends FragmentMaster implements PagerController {
 
     // The id of fragments' real container.
     public final static int FRAGMENT_CONTAINER_ID = R.id.master_fragment_container;
@@ -19,34 +20,10 @@ class FragmentMasterImpl extends FragmentMaster {
 
     private FragmentMasterPager mViewPager;
 
-    private boolean mScrolling = false;
-
-    private int mState = ViewPagerCompat.SCROLL_STATE_IDLE;
-
-    private ViewPagerCompat.OnPageChangeListener mOnPageChangeListener = new ViewPagerCompat.OnPageChangeListener() {
-
-        @Override
-        public void onPageSelected(int position) {
-        }
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset,
-                                   int positionOffsetPixels) {
-            if (mState == ViewPagerCompat.SCROLL_STATE_IDLE) {
-                setUpAnimator(getPrimaryFragment());
-            }
-        }
-
+    private ViewPager.OnPageChangeListener mOnPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageScrollStateChanged(int state) {
-            mState = state;
-            if (state == ViewPagerCompat.SCROLL_STATE_IDLE) {
-                mViewPager.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setUpAnimator(getPrimaryFragment());
-                    }
-                });
+            if (state == ViewPager.SCROLL_STATE_IDLE) {
                 onScrollIdle();
             }
         }
@@ -66,12 +43,12 @@ class FragmentMasterImpl extends FragmentMaster {
     @Override
     protected void performInstall(ViewGroup container) {
         mAdapter = new FragmentsAdapter();
-        mViewPager = new FragmentMasterPager(this);
+        mViewPager = new FragmentMasterPager(getActivity(), this);
         mViewPager.setId(FRAGMENT_CONTAINER_ID);
         mViewPager.setOffscreenPageLimit(Integer.MAX_VALUE);
         mViewPager.setAdapter(mAdapter);
-        mViewPager.setOnPageChangeListener(mOnPageChangeListener);
-        mViewPager.setScrollDuration(getScrollDuration());
+        mViewPager.addOnPageChangeListener(mOnPageChangeListener);
+        // TODO: Plucky 2018/1/7 下午6:18  需要控制滚动时间
         container.addView(mViewPager);
     }
 
@@ -88,29 +65,37 @@ class FragmentMasterImpl extends FragmentMaster {
         // one item.
         boolean smoothScroll = hasPageAnimator() && nextItem > 0;
         mViewPager.setCurrentItem(nextItem, smoothScroll);
-        if (smoothScroll) {
-            mScrolling = true;
-        }
     }
 
     @Override
     protected void onFinishFragment(final IMasterFragment fragment,
                                     final int resultCode, final Request data) {
-        final int index = getFragments().indexOf(fragment);
-        int curItem = mViewPager.getCurrentItem();
-
-        if (hasPageAnimator() && curItem == index && index != 0) {
+        final int index = indexOf(fragment);
+        if (index != 0 && isPrimaryFragment(fragment)) {
             // If there's a PageAnimator, and the fragment to finish is the
             // primary fragment, scroll back smoothly.
             // When scrolling is stopped, real finish will be done by
             // cleanUp method.
-            mViewPager.setCurrentItem(index - 1, true);
-            mScrolling = true;
-        }
-        if (mScrolling) {
-            // If pager is scrolling, do real finish when cleanUp.
-            deliverFragmentResult(fragment, resultCode, data);
-            return;
+            if (hasPageAnimator()) {
+                mViewPager.setCurrentItem(index - 1, true);
+                // If pager is scrolling, do real finish when cleanUp.
+                deliverFragmentResult(fragment, resultCode, data);
+                return;
+            }
+            // If there isn't a PageAnimator, this fragment will be finished immediately.
+            // Before finish this fragment, finish fragments above it.
+            List<IMasterFragment> fragments = new ArrayList<>(getFragments());
+            for (int i = fragments.size() - 1; i > index; i--) {
+                IMasterFragment f = fragments.get(i);
+                if (isInFragmentMaster(f)) {
+                    if (isFinishPending(f)) {
+                        doFinishFragment(f);
+                    } else {
+                        f.finish();
+                    }
+                }
+            }
+            mViewPager.setCurrentItem(index - 1, false);
         }
         super.onFinishFragment(fragment, resultCode, data);
     }
@@ -121,14 +106,9 @@ class FragmentMasterImpl extends FragmentMaster {
     }
 
     private void onScrollIdle() {
-        mScrolling = false;
         // When scrolling stopped, do cleanup.
         mViewPager.removeCallbacks(mCleanUpRunnable);
         mViewPager.post(mCleanUpRunnable);
-    }
-
-    boolean isScrolling() {
-        return mScrolling;
     }
 
     /**
@@ -156,7 +136,7 @@ class FragmentMasterImpl extends FragmentMaster {
                     }
                 }
             } else {
-                if (isFinishPending(f) && !mScrolling) {
+                if (isFinishPending(f) && !mViewPager.isScrolling()) {
                     doFinishFragment(f);
                 }
             }
@@ -173,7 +153,7 @@ class FragmentMasterImpl extends FragmentMaster {
         @Override
         public int getItemPosition(Object object) {
             IMasterFragment fragment = (IMasterFragment) object;
-            int position = getFragments().indexOf(fragment);
+            int position = indexOf(fragment);
             return position == -1 ? POSITION_NONE : position;
         }
 

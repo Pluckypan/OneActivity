@@ -21,9 +21,13 @@ public abstract class PageAnimator {
      * @param enter    true if the pager is scrolling from item to item+1.
      */
     public void transformPage(View page, float position, boolean enter) {
-        if (position <= 0) { // [-1,0]
+        if (position <= -1 || position > 1) {
+            transformUnderlyingPage(page, position, enter);
+        } else if (position <= 0) { // （-1,0]
+            page.setVisibility(View.VISIBLE);
             transformBackgroundPage(page, position, enter);
         } else if (position <= 1) { // (0,1]
+            page.setVisibility(View.VISIBLE);
             transformForegroundPage(page, position, enter);
         }
     }
@@ -31,7 +35,7 @@ public abstract class PageAnimator {
     /**
      * In this stage, transform the background page.
      *
-     * @param position [-1,0]
+     * @param position (-1,0]
      */
     protected abstract void transformBackgroundPage(View page, float position,
                                                     boolean enter);
@@ -43,6 +47,17 @@ public abstract class PageAnimator {
      */
     protected abstract void transformForegroundPage(View page, float position,
                                                     boolean enter);
+
+    protected void transformUnderlyingPage(View page, float position, boolean enter) {
+        page.setAlpha(1);
+        page.setScaleX(1);
+        page.setScaleY(1);
+        page.setTranslationX(0);
+        page.setTranslationY(0);
+        // Avoid overdraw
+        page.setVisibility(View.INVISIBLE);
+    }
+
 
     public static void setScaleX(View view, float scale) {
         ViewCompat.setScaleX(view, scale);

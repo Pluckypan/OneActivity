@@ -1,142 +1,100 @@
 package engineer.echo.oneactivity.core;
 
-import android.annotation.SuppressLint;
 import android.os.Parcelable;
-import android.support.v4.view.ViewPagerCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
 
+import engineer.echo.oneactivity.animator.DefaultPageAnimator;
 import engineer.echo.oneactivity.animator.PageAnimator;
 
 /**
  * Real container of fragments.
  */
-class FragmentMasterPager extends ViewPagerCompat {
+class FragmentMasterPager extends ViewPager {
 
-    private FragmentMasterImpl mFragmentMasterImpl;
+    private static final int FROWARD = 0;
 
-    private static final int ANIMATION_NONE = 0;
+    private static final int BACKWARD = 1;
 
-    private static final int ANIMATION_ENTER = 1;
+    private PagerController mPagerController;
 
-    private static final int ANIMATION_EXIT = 2;
+    private int mScrollDirection = FROWARD;
 
-    private int mAnimationState = ANIMATION_NONE;
+    private int mLastPosition = 0;
 
-    // The position of primary item in the latest SCROLL_STATE_IDLE state.
-    private int mLatestIdleItem = 0;
+    private float mLastScrollOffset = 0f;
 
-    private Runnable mIdleRunnable = new Runnable() {
-        public void run() {
-            mLatestIdleItem = getCurrentItem();
-            setAnimationState(ANIMATION_NONE);
-        }
-    };
+    private int mCurScrollState = SCROLL_STATE_IDLE;
 
-    private PageTransformer mPageTransformer = new PageTransformer() {
+    private ViewPager.PageTransformer mPageTransformer = new ViewPager.PageTransformer() {
         @Override
         public void transformPage(View page, float position) {
-            resetPage(page, position);
-            if (mFragmentMasterImpl.hasPageAnimator()) {
-                float pos = position < -1 ? -1 : (position > 1 ? 1 : position);
-                page.setVisibility(VISIBLE);
-                mFragmentMasterImpl.getPageAnimator().transformPage(page,
-                        pos, mAnimationState == ANIMATION_ENTER);
-            } else {
-                page.setVisibility(VISIBLE);
-            }
+            PageAnimator animator = mPagerController.getPageAnimator();
+            animator = animator != null ? animator : DefaultPageAnimator.INSTANCE;
+            boolean enter = (mScrollDirection == FROWARD) && (mCurScrollState != SCROLL_STATE_DRAGGING);
+            animator.transformPage(page, position, enter);
         }
-
-        private void resetPage(View page, float position) {
-            PageAnimator.setAlpha(page, 1);
-            PageAnimator.setTranslationX(page, 0);
-            PageAnimator.setTranslationY(page, 0);
-            PageAnimator.setScaleX(page, 1);
-            PageAnimator.setScaleY(page, 1);
-            PageAnimator.setRotation(page, 0);
-            PageAnimator.setRotationX(page, 0);
-            PageAnimator.setRotationY(page, 0);
-            PageAnimator.setPivotX(page, page.getWidth() / 2f);
-            PageAnimator.setPivotY(page, page.getHeight() / 2f);
-        }
-
     };
 
     // Internal listener
-    private OnPageChangeListener mOnPageChangeListener = new OnPageChangeListener() {
+    private OnPageChangeListener mOnPageChangeListener = new SimpleOnPageChangeListener() {
         @Override
         public void onPageScrollStateChanged(int state) {
-            if (mWrappedOnPageChangeListener != null) {
-                mWrappedOnPageChangeListener.onPageScrollStateChanged(state);
-            }
-
-            if (state == ViewPagerCompat.SCROLL_STATE_IDLE) {
-                post(mIdleRunnable);
-            }
-        }
-
-        @Override
-        public void onPageScrolled(int position, float positionOffset,
-                                   int positionOffsetPixels) {
-            if (mWrappedOnPageChangeListener != null) {
-                mWrappedOnPageChangeListener.onPageScrolled(position,
-                        positionOffset, positionOffsetPixels);
-            }
-        }
-
-        @Override
-        public void onPageSelected(int position) {
-            if (mWrappedOnPageChangeListener != null) {
-                mWrappedOnPageChangeListener.onPageSelected(position);
-            }
+            mCurScrollState = state;
         }
     };
 
-    private OnPageChangeListener mWrappedOnPageChangeListener;
-
-    public FragmentMasterPager(FragmentMasterImpl fragmentMaster) {
-        super(fragmentMaster.getActivity());
-        mFragmentMasterImpl = fragmentMaster;
-        super.setOnPageChangeListener(mOnPageChangeListener);
+    public FragmentMasterPager(FragmentActivity activity, PagerController pagerController) {
+        super(activity);
+        mPagerController = pagerController;
+        addOnPageChangeListener(mOnPageChangeListener);
         setPageTransformer(false, mPageTransformer);
     }
 
+    public boolean isScrolling() {
+        return mCurScrollState != SCROLL_STATE_IDLE;
+    }
+
+    private boolean interceptTouch() {
+        return mCurScrollState == SCROLL_STATE_SETTLING;
+    }
+
     @Override
-    @SuppressLint("ClickableViewAccessibility")
     public boolean onTouchEvent(MotionEvent ev) {
-        return mFragmentMasterImpl.isSlideable() && !mFragmentMasterImpl.isScrolling() && super.onTouchEvent(ev);
+        return canScroll() && !interceptTouch() && super.onTouchEvent(ev);
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        return mFragmentMasterImpl.isSlideable() && !mFragmentMasterImpl.isScrolling() && super.onInterceptTouchEvent(ev);
-    }
-
-    @Override
-    public void setOnPageChangeListener(OnPageChangeListener listener) {
-        mWrappedOnPageChangeListener = listener;
+        return canScroll() && (interceptTouch() || super.onInterceptTouchEvent(ev));
     }
 
     @Override
     protected void onPageScrolled(int position, float offset, int offsetPixels) {
-        if (mLatestIdleItem > position) {
+        float prePosition = mLastPosition + mLastScrollOffset;
+        float curPosition = position + offset;
+        if (prePosition > curPosition) {
             // The ViewPager is performing exiting.
-            setAnimationState(ANIMATION_EXIT);
-        } else if (mLatestIdleItem <= position) {
+            mScrollDirection = BACKWARD;
+        } else if (prePosition < curPosition) {
             // The ViewPager is performing entering.
-            setAnimationState(ANIMATION_ENTER);
+            mScrollDirection = FROWARD;
         }
+        mLastScrollOffset = offset;
+        mLastPosition = position;
         super.onPageScrolled(position, offset, offsetPixels);
     }
 
     @Override
     public void onRestoreInstanceState(Parcelable state) {
         super.onRestoreInstanceState(state);
-        mLatestIdleItem = getCurrentItem();
+        mLastPosition = getCurrentItem();
+        mLastScrollOffset = 0f;
     }
 
-    private void setAnimationState(int state) {
-        mAnimationState = state;
+    private boolean canScroll() {
+        return mPagerController.allowSwipeBack() && mPagerController.hasPageAnimator();
     }
-
 }

@@ -1,10 +1,8 @@
 package engineer.echo.oneactivity.dispatch;
 
-import android.support.v4.view.KeyEventCompat2;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-
 import engineer.echo.oneactivity.core.IMasterFragment;
 
 /**
@@ -23,10 +21,7 @@ public class FragmentEventDispatcher implements EventDispatcher {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         View view = mMasterFragment.getView();
-        return KeyEventCompat2.dispatch(event, mMasterFragment,
-                view != null
-                        ? KeyEventCompat2.getKeyDispatcherState(view)
-                        : null, this);
+        return event.dispatch(mMasterFragment, view != null ? view.getKeyDispatcherState() : null, this);
     }
 
     @Override

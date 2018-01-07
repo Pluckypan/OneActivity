@@ -8,25 +8,25 @@ import android.os.Parcelable;
  * Created by Plucky<plucky@echo.engineer> on 2018/1/6 下午6:09.
  * more about me: http://www.1991th.com
  */
-class MasterFragmentState implements Parcelable {
+final class MasterFragmentState implements Parcelable {
 
     Request mRequest;
 
     int mSoftInputMode;
 
-    boolean mIsSlideable;
+    boolean mAllowSwipeBack;
 
     public MasterFragmentState(MasterFragmentDelegate mfd) {
         mRequest = mfd.mRequest;
         mSoftInputMode = mfd.mSoftInputMode;
-        mIsSlideable = mfd.mIsSlideable;
+        mAllowSwipeBack = mfd.mAllowSwipeBack;
     }
 
     public MasterFragmentState(Parcel in) {
         mRequest = in
                 .readParcelable(MasterFragmentState.class.getClassLoader());
         mSoftInputMode = in.readInt();
-        mIsSlideable = in.readInt() != 0;
+        mAllowSwipeBack = in.readInt() != 0;
     }
 
     @Override
@@ -38,11 +38,11 @@ class MasterFragmentState implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(mRequest, flags);
         dest.writeInt(mSoftInputMode);
-        dest.writeInt(mIsSlideable ? 1 : 0);
+        dest.writeInt(mAllowSwipeBack ? 1 : 0);
     }
 
-    public static final Creator<MasterFragmentState> CREATOR
-            = new Creator<MasterFragmentState>() {
+    public static final Parcelable.Creator<MasterFragmentState> CREATOR
+            = new Parcelable.Creator<MasterFragmentState>() {
         public MasterFragmentState createFromParcel(Parcel in) {
             return new MasterFragmentState(in);
         }

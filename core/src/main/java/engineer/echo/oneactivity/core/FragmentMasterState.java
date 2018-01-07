@@ -13,7 +13,7 @@ final class FragmentMasterState implements Parcelable {
 
     Bundle mFragments;
 
-    boolean mIsSlideable;
+    boolean mAllowSwipeBack;
 
     boolean mHomeFragmentApplied;
 
@@ -22,7 +22,7 @@ final class FragmentMasterState implements Parcelable {
 
     private FragmentMasterState(Parcel in) {
         mFragments = in.readBundle(getClass().getClassLoader());
-        mIsSlideable = in.readInt() == 0;
+        mAllowSwipeBack = in.readInt() == 0;
         mHomeFragmentApplied = in.readInt() == 0;
     }
 
@@ -34,12 +34,12 @@ final class FragmentMasterState implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeBundle(mFragments);
-        dest.writeInt(mIsSlideable ? 0 : 1);
+        dest.writeInt(mAllowSwipeBack ? 0 : 1);
         dest.writeInt(mHomeFragmentApplied ? 0 : 1);
     }
 
-    public static final Creator<FragmentMasterState> CREATOR
-            = new Creator<FragmentMasterState>() {
+    public static final Parcelable.Creator<FragmentMasterState> CREATOR
+            = new Parcelable.Creator<FragmentMasterState>() {
         public FragmentMasterState createFromParcel(Parcel in) {
             return new FragmentMasterState(in);
         }

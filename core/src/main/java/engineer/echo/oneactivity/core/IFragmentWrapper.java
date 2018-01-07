@@ -32,3 +32,4 @@ interface IFragmentWrapper {
 
     View getView();
 }
+

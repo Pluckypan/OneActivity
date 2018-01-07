@@ -37,7 +37,7 @@ public interface IMasterFragment
     /**
      * Same as calling {@link #startFragment(Request)}
      *
-     * @param clazz The {@link Class} of the IMasterFragment.
+     * @param clazz The {@link java.lang.Class} of the IMasterFragment.
      * @see #startFragment(Request)
      * @see #startFragmentForResult(Request, int)
      */
@@ -61,7 +61,7 @@ public interface IMasterFragment
     /**
      * Same as calling {@link #startFragmentForResult(Request, int)}.
      *
-     * @param clazz       The {@link Class} of the IMasterFragment.
+     * @param clazz       The {@link java.lang.Class} of the IMasterFragment.
      * @param requestCode If >= 0, this code will be returned in
      *                    onFragmentResult() when the IMasterFragment exits.
      * @see #startFragmentForResult(Request, int)
@@ -147,9 +147,9 @@ public interface IMasterFragment
 
     boolean isActive();
 
-    void setSlideable(boolean slideable);
+    void allowSwipeBack(boolean allowSwipeBack);
 
-    boolean isSlideable();
+    boolean allowSwipeBack();
 
     PageAnimator onCreatePageAnimator();
 

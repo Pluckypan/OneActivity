@@ -16,7 +16,7 @@ public class Request implements Parcelable, Cloneable {
 
     private Bundle mExtras;
 
-    public static final Creator<Request> CREATOR = new Creator<Request>() {
+    public static final Parcelable.Creator<Request> CREATOR = new Parcelable.Creator<Request>() {
         public Request createFromParcel(Parcel in) {
             return new Request(in);
         }
@@ -669,7 +669,7 @@ public class Request implements Parcelable, Cloneable {
      * @see #getParcelableArrayListExtra(String)
      */
     public Request putParcelableArrayListExtra(String name,
-            ArrayList<? extends Parcelable> value) {
+                                               ArrayList<? extends Parcelable> value) {
         if (mExtras == null) {
             mExtras = new Bundle();
         }
@@ -689,7 +689,7 @@ public class Request implements Parcelable, Cloneable {
      * @see #getIntegerArrayListExtra(String)
      */
     public Request putIntegerArrayListExtra(String name,
-            ArrayList<Integer> value) {
+                                            ArrayList<Integer> value) {
         if (mExtras == null) {
             mExtras = new Bundle();
         }

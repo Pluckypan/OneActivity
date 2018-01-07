@@ -30,7 +30,7 @@ public abstract class FragmentMaster {
 
     private ViewGroup mContainer;
 
-    private boolean mIsSlideable = false;
+    private boolean mAllowSwipeBack = false;
 
     private boolean mIsInstalled = false;
 
@@ -39,6 +39,10 @@ public abstract class FragmentMaster {
     private boolean mHomeFragmentApplied = false;
 
     private PageAnimator mPageAnimator = null;
+
+    private boolean mRestoreAnimator = false;
+
+    private int mPendingSetUpAnimatorIndex = -1;
 
     private IMasterFragment mPrimaryFragment = null;
 
@@ -91,14 +95,14 @@ public abstract class FragmentMaster {
         onFragmentStarted(fragment);
     }
 
-    private int scrollDuration;
+    private int mScrollDuration;
 
     public int getScrollDuration() {
-        return scrollDuration;
+        return mScrollDuration;
     }
 
     public void setScrollDuration(int scrollDuration) {
-        this.scrollDuration = scrollDuration;
+        this.mScrollDuration = scrollDuration;
     }
 
     protected void setUpAnimator(IMasterFragment fragment) {
@@ -124,6 +128,7 @@ public abstract class FragmentMaster {
         if (!isFinishPending(fragment)) {
             mFinishPendingFragments.add(fragment);
         }
+        resolvePendingSetUpAnimator();
         onFinishFragment(fragment, resultCode, data);
     }
 
@@ -166,11 +171,11 @@ public abstract class FragmentMaster {
     }
 
     protected final void doFinishFragment(IMasterFragment fragment) {
-        if (mRecords.indexOf(fragment) == 0 && mSticky) {
+        if (indexOf(fragment) == 0 && mSticky) {
             mActivity.finish();
             return;
         }
-
+        resolvePendingSetUpAnimator();
         mFragmentManager.beginTransaction().remove(fragment.getFragment())
                 .commit();
         mFragmentManager.executePendingTransactions();
@@ -211,21 +216,35 @@ public abstract class FragmentMaster {
 
     protected abstract void onFragmentFinished(IMasterFragment fragment);
 
+    public boolean isPrimaryFragment(IMasterFragment fragment) {
+        return mPrimaryFragment == fragment;
+    }
+
     public IMasterFragment getPrimaryFragment() {
         return mPrimaryFragment;
     }
 
     protected final void setPrimaryFragment(IMasterFragment fragment) {
         if (fragment != mPrimaryFragment) {
+            int preIndex = -1;
+            int curIndex = -1;
             if (mPrimaryFragment != null) {
                 mPrimaryFragment.setPrimary(false);
+                preIndex = indexOf(mPrimaryFragment);
             }
             if (fragment != null) {
                 fragment.setPrimary(true);
+                curIndex = indexOf(fragment);
             }
+            boolean backward = curIndex == preIndex - 1;
+            mPendingSetUpAnimatorIndex = backward ? curIndex : -1;
             mPrimaryFragment = fragment;
             // Only the primary fragment can receive events.
             mEventDispatcher.setInterceptor(fragment);
+            if (mRestoreAnimator) {
+                setUpAnimator(fragment);
+                mRestoreAnimator = false;
+            }
         }
     }
 
@@ -233,7 +252,19 @@ public abstract class FragmentMaster {
         return mRecords.getFragments();
     }
 
-    protected void setPageAnimator(PageAnimator pageAnimator) {
+    public int indexOf(IMasterFragment fragment) {
+        return mRecords.indexOf(fragment);
+    }
+
+    private void resolvePendingSetUpAnimator() {
+        IMasterFragment fragment = getPrimaryFragment();
+        if (mPendingSetUpAnimatorIndex == indexOf(fragment)) {
+            setUpAnimator(fragment);
+            mPendingSetUpAnimatorIndex = -1;
+        }
+    }
+
+    public void setPageAnimator(PageAnimator pageAnimator) {
         mPageAnimator = pageAnimator;
     }
 
@@ -272,7 +303,7 @@ public abstract class FragmentMaster {
     private void checkInstallProperties() {
         View container = mActivity.findViewById(mContainerResID);
         if (container == null) {
-            throw new RuntimeException("No android.support.v4.view found for id 0x"
+            throw new RuntimeException("No view found for id 0x"
                     + Integer.toHexString(mContainerResID));
         } else {
             mContainer = (ViewGroup) container;
@@ -285,18 +316,18 @@ public abstract class FragmentMaster {
         return mIsInstalled;
     }
 
-    public final void setSlideable(boolean slideable) {
-        mIsSlideable = slideable;
+    public void allowSwipeBack(boolean allowSwipeBack) {
+        mAllowSwipeBack = allowSwipeBack;
     }
 
-    public boolean isSlideable() {
-        return hasPageAnimator() && mIsSlideable;
+    public boolean allowSwipeBack() {
+        return mAllowSwipeBack;
     }
 
     Parcelable saveAllState() {
         FragmentMasterState state = new FragmentMasterState();
         state.mFragments = mRecords.save(mFragmentManager);
-        state.mIsSlideable = mIsSlideable;
+        state.mAllowSwipeBack = mAllowSwipeBack;
         state.mHomeFragmentApplied = mHomeFragmentApplied;
 
         logState();
@@ -317,7 +348,7 @@ public abstract class FragmentMaster {
         }
         Log.d(TAG, "STATE FragmentMaster[" + mRecords.size()
                 + "], FragmentManager[" + fragmentsInManagerCount
-                + "], mIsSlideable[" + mIsSlideable
+                + "], mAllowSwipeBack[" + mAllowSwipeBack
                 + "], mHomeFragmentApplied[" + mHomeFragmentApplied + "]");
     }
 
@@ -325,8 +356,9 @@ public abstract class FragmentMaster {
         if (state != null) {
             FragmentMasterState fms = (FragmentMasterState) state;
             mRecords.restore(mFragmentManager, fms.mFragments);
-            setSlideable(fms.mIsSlideable);
+            allowSwipeBack(fms.mAllowSwipeBack);
             mHomeFragmentApplied = fms.mHomeFragmentApplied;
+            mRestoreAnimator = true;
         }
     }
 
@@ -552,4 +584,5 @@ public abstract class FragmentMaster {
         }
     }
 }
+
 

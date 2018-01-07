@@ -1,7 +1,6 @@
 package engineer.echo.oneactivity.dispatch;
 
 import android.app.Activity;
-import android.support.v4.view.KeyEventCompat2;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,9 +21,7 @@ class ActivityEventDispatcher implements EventDispatcher {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         final View decor = mActivity.getWindow().getDecorView();
-        return KeyEventCompat2.dispatch(event, mActivity, decor != null
-                ? KeyEventCompat2.getKeyDispatcherState(decor)
-                : null, mActivity);
+        return event.dispatch(mActivity, decor != null ? decor.getKeyDispatcherState() : null, mActivity);
     }
 
     @Override

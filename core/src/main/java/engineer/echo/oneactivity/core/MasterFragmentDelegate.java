@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -26,14 +28,14 @@ class MasterFragmentDelegate {
 
     private FragmentContext mFragmentContext;
 
-    private IMasterFragment mMasterFragment;
+    IMasterFragment mMasterFragment;
 
     Request mRequest = null;
 
     // SoftInputMode, SOFT_INPUT_ADJUST_UNSPECIFIED is default.
     int mSoftInputMode = WindowManager.LayoutParams.SOFT_INPUT_ADJUST_UNSPECIFIED;
 
-    boolean mIsSlideable = true;
+    boolean mAllowSwipeBack = true;
 
     private IMasterFragment mTargetChildFragment;
 
@@ -52,6 +54,7 @@ class MasterFragmentDelegate {
         }
     };
 
+    private Activity mActivity;
     private IMasterActivity mMasterActivity;
 
     private boolean mStateSaved = false;
@@ -77,6 +80,7 @@ class MasterFragmentDelegate {
         if (activity instanceof IMasterActivity) {
             mMasterActivity = (IMasterActivity) activity;
         }
+        mActivity = activity;
         mFragmentContext = new FragmentContext(mMasterFragment);
         if (getFragmentMaster() != null) {
             getFragmentMaster().dispatchFragmentAttached(mMasterFragment);
@@ -109,12 +113,12 @@ class MasterFragmentDelegate {
 
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // Use window background as the top level background.
-        // Note: The android.support.v4.view is an instance of NoSaveStateFrameLayout,
-        // which is inserted between the Fragment's android.support.v4.view and its container by FragmentManager.
+        // Note: The view is an instance of NoSaveStateFrameLayout,
+        // which is inserted between the Fragment's view and its container by FragmentManager.
         TypedValue outValue = new TypedValue();
         getFragmentContext().getTheme().resolveAttribute(android.R.attr.windowBackground, outValue, true);
         view.setBackgroundResource(outValue.resourceId);
-        // Set the "clickable" of the fragment's root android.support.v4.view to true to avoid
+        // Set the "clickable" of the fragment's root view to true to avoid
         // touch events to be passed to the views behind the fragment.
         view.setClickable(true);
         if (getFragmentMaster() != null) {
@@ -175,6 +179,7 @@ class MasterFragmentDelegate {
 
     public void onDetach() {
         mMasterActivity = null;
+        mActivity = null;
         if (getFragmentMaster() != null) {
             getFragmentMaster().dispatchFragmentDetached(mMasterFragment);
         }
@@ -322,21 +327,21 @@ class MasterFragmentDelegate {
         }
     }
 
-    public void setSlideable(boolean slideable) {
-        if (mIsSlideable != slideable) {
-            mIsSlideable = slideable;
+    public void allowSwipeBack(boolean allowSwipeBack) {
+        if (mAllowSwipeBack != allowSwipeBack) {
+            mAllowSwipeBack = allowSwipeBack;
             invalidateMasterConfiguration();
         }
     }
 
-    public boolean isSlideable() {
-        return mIsSlideable;
+    public boolean allowSwipeBack() {
+        return mAllowSwipeBack;
     }
 
     void invalidateMasterConfiguration() {
         checkState();
         FragmentMaster fragmentMaster = getFragmentMaster();
-        fragmentMaster.setSlideable(mIsSlideable);
+        fragmentMaster.allowSwipeBack(mAllowSwipeBack);
     }
 
     public void setPrimary(boolean isPrimary) {
@@ -422,19 +427,21 @@ class MasterFragmentDelegate {
     // ------------------------------------------------------------------------
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.ECLAIR) {
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-                mMasterFragment.onBackPressed();
-                return true;
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mFragmentContext.getApplicationInfo().targetSdkVersion
+                    >= Build.VERSION_CODES.ECLAIR) {
+                event.startTracking();
+            } else {
+                onBackPressed();
             }
-        } else {
-            event.startTracking();
+            return true;
         }
         return false;
     }
 
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ECLAIR) {
+        if (mFragmentContext.getApplicationInfo().targetSdkVersion
+                >= Build.VERSION_CODES.ECLAIR) {
             if (keyCode == KeyEvent.KEYCODE_BACK && event.isTracking()
                     && !event.isCanceled()) {
                 mMasterFragment.onBackPressed();
