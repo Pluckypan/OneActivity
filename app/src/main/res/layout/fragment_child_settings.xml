@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/girl_0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/app_settings_fake_top"
+        style="@style/SettingsCircle"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/shape_circle_0099ff"
+        app:layout_constraintBottom_toTopOf="@+id/app_settings_take_photo_btn"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/app_settings_take_photo_btn"
+        style="@style/SettingsCircle"
+        android:scaleType="centerCrop"
+        android:src="@drawable/play"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/app_settings_fake_bottom"
+        style="@style/SettingsCircle"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/shape_circle_00ccff"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/app_settings_take_photo_btn" />
+</android.support.constraint.ConstraintLayout>

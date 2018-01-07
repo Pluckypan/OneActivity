@@ -27,5 +27,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/app_main_animator" />
 
+    <TextView
+        android:id="@+id/app_main_transition_tv"
+        style="@style/TextItemStyle"
+        android:background="@color/color_FF0099"
+        android:text="过渡动画 "
+        app:layout_constraintStart_toEndOf="@id/app_main_softinput_tv"
+        app:layout_constraintTop_toBottomOf="@id/app_main_animator" />
+
 
 </android.support.constraint.ConstraintLayout>

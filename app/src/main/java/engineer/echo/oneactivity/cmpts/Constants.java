@@ -18,4 +18,8 @@ public class Constants {
             new AnimatorBean("动画·二式", R.color.color_0099FF, EnterOvershootAnimator.class, 1000),
             new AnimatorBean("动画·三式", R.color.color_00FFFF, VerticalSlideAnimator.class, 2000),
     };
+
+    public static final int TRANSITION_TIME = 600;
+    public static final int TRANSITION_TIME_SHORT = 400;
+    public static final int TRANSITION_TIME_LONG = 800;
 }
