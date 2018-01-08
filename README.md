@@ -125,5 +125,13 @@ public class LightThemeFragment extends MasterFragment {
 - [ ] 监听嵌套Fragment的返回键监听
 - [ ] 实现OneActivity MVP 自动生成插件(有点特殊)
 
+### 代码
+[![](https://img.shields.io/github/forks/pluckypan/OneActivity.svg?style=social)](https://github.com/Pluckypan/OneActivity)
+[![](https://img.shields.io/github/stars/pluckypan/OneActivity.svg?style=social)](https://github.com/Pluckypan/OneActivity)
+[![](https://img.shields.io/github/followers/pluckypan.svg?style=social)](https://github.com/pluckypan/followers)
+
+本文示例代码: `git@github.com:Pluckypan/OneActivity.git` [预览](https://github.com/Pluckypan/OneActivity) 欢迎Star、Fork
+
+
 ### 写在结尾
 > 碧玉妆成一树高，万条垂下绿丝绦。不知细叶谁裁出，二月春风似剪刀。
