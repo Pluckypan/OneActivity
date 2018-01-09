@@ -25,8 +25,8 @@
 5. 最低兼容版本 `Android API 15`
 
 ### 安装
-
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/engineer.echo.oneactivity/core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/engineer.echo.oneactivity/core)
+[![API](https://img.shields.io/badge/API-15%2B-green.svg)](https://github.com/florent37/ViewAnimator/tree/master)
+ [![Download](https://api.bintray.com/packages/pluckypan/maven/OneActivity/images/download.svg)](https://bintray.com/pluckypan/maven/OneActivity/_latestVersion)
 
 #### Gradle
 ```
