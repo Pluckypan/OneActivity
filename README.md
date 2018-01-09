@@ -24,7 +24,74 @@
 4. 支持定义不同 `Fragment` 页面的切换动画
 5. 最低兼容版本 `Android API 15`
 
+### 安装
+#### Gradle
+```
+compile 'engineer.echo.oneactivity:core:0.0.1'
+```
+
+#### Maven
+``` xml
+<dependency>
+  <groupId>engineer.echo.oneactivity</groupId>
+  <artifactId>core</artifactId>
+  <version>0.0.1</version>
+  <type>pom</type>
+</dependency>
+```
 ### 功能演示及代码说明
+
+#### Activity初始化 JAVA
+``` java
+public class MainActivity extends MasterCompatActivity {
+
+    private static final String TAG = "MainActivity";
+
+    private FragmentMaster mMaster;
+    //用于监听各个Fragment生命周期
+    private FragmentMaster.FragmentLifecycleCallbacks mCallBacks = new FragmentMaster.SimpleFragmentLifecycleCallbacks() {
+        @Override
+        public void onFragmentResumed(IMasterFragment fragment) {
+            super.onFragmentResumed(fragment);
+            App.LOG(TAG, "onFragmentResumed: " + fragment);
+        }
+
+        @Override
+        public void onFragmentPaused(IMasterFragment fragment) {
+            super.onFragmentPaused(fragment);
+            App.LOG(TAG, "onFragmentPaused: " + fragment);
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        mMaster = getFragmentMaster();
+        mMaster.registerFragmentLifecycleCallbacks(mCallBacks);
+        //这里让MainFragment作为首页
+        mMaster.install(R.id.app_main_container, new Request(MainFragment.class), true);
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mMaster != null) {
+            mMaster.unregisterFragmentLifecycleCallbacks(mCallBacks);
+        }
+    }
+}
+```
+#### Activity 布局
+``` xml
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/app_main_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
 
 #### 打开一个页面
 ``` java
