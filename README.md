@@ -25,6 +25,9 @@
 5. 最低兼容版本 `Android API 15`
 
 ### 安装
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/engineer.echo.oneactivity/core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/engineer.echo.oneactivity/core)
+
 #### Gradle
 ```
 compile 'engineer.echo.oneactivity:core:0.0.1'
